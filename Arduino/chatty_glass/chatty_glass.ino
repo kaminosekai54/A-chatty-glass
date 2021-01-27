@@ -119,14 +119,16 @@ delayMicroseconds(10);
 
 digitalWrite(trigPin, LOW);
 
-
+// recuperation of the ultrasonic 
 duration = pulseIn(echoPin, HIGH);
+// the distance is divided by two, because its make the back and force and we multiply it by the speed of sound
 distance= (duration*0.034/2 ) -14.5;
+// the volume of our glass is equals to the total volume (1 L), minus the volume of the air we found
  volume =1000 - ( M_PI * rayon * rayon * distance  );
 if (volume >= 0 && volume <= 1000){
 Serial.print("Distance: ");
 Serial.println(volume);
-
+// if the new volume is different from the previous one
 if (volume >= lastVolume  + 1 || volume <= lastVolume - 1){
 findFileName(volume);
 lastVolume = volume;
@@ -135,12 +137,16 @@ delay(2000);
 }
 }
 
+/*
+ * this function is made for finding the 
+ * name of the audio sample to call
+ * @param
+ * @volume, the volume to decompose into different part
 
+ */
 void findFileName(int  volume){
   int samples[4];
-  //sizeof(String(volume)) / sizeof(String(volume)[0]) + 1];
    int len = 4;
-   //sizeof(String(volume)) / sizeof(String(volume)[0]);
    int index = 0;
    int tmpVolume = volume;
    while (len > 0){
@@ -209,14 +215,18 @@ speak(samples);
     
   }
   
+  /*
+   * This function is will call the different audio samples
+   * In order to have the correct volume annonced
+   * @param
+   * @fileName, a list of volume, we base our audio sample on those decomposed volume value
+   */
 void speak(int* fileName){
   for (int i = 0; i < 5; i++) {
-    // if (!fileName[i].equals("nofile")){
   
   String name = "/" + String(fileName[i]) + ".mp3";
   char tmp[sizeof(name)];
     name.toCharArray(tmp, sizeof(tmp));
-  // if (musicPlayer.playingMusic){}
   musicPlayer.playFullFile(tmp);
     }  // }
 }
